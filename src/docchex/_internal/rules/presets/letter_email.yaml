@@ -1,0 +1,7 @@
+# docchex preset: letter_email
+# Suitable for formal letters, professional emails, and short correspondence.
+rules:
+  - {id: letter.salutation, type: required_section, match: Dear,    severity: warning}
+  - {id: letter.closing,    type: required_section, match: Regards, severity: info}
+  - {id: letter.min_length, type: word_count, min: 20,  severity: warning}
+  - {id: letter.max_length, type: word_count, max: 500, severity: warning}

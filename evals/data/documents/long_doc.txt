@@ -1,0 +1,25 @@
+Overview
+
+This document is a long fixture used to test word count upper-bound rules.
+It contains enough words to exceed a low maximum threshold such as fifty words.
+
+Background
+
+The purpose of this fixture is purely mechanical. The rule engine counts words
+by splitting on whitespace. This paragraph and those that follow add volume to
+ensure the total word count is well above any low maximum threshold configured
+in the evaluation cases for the word_count rule suite.
+
+Details
+
+Additional content appears here to pad the word count further. The text does
+not need to be meaningful or coherent. It only needs to be deterministic so
+that every run of the benchmark produces the same word count from this file.
+Determinism is critical because the eval cases declare exact expected outcomes
+and any variance in word count would cause spurious failures in the suite.
+
+Conclusion
+
+This section closes the document. The total word count of this file exceeds
+one hundred and fifty words, which is sufficient to trigger any max-words
+rule configured with a threshold below that figure in the evaluation cases.

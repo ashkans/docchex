@@ -1,0 +1,24 @@
+{
+  "eval_version": "1.0.0",
+  "package_version": "0.1.dev0",
+  "timestamp": "2026-04-04T09:50:27Z",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "accuracy": 1.0,
+  "by_suite": {
+    "required_section": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "accuracy": 1.0
+    },
+    "word_count": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "accuracy": 1.0
+    }
+  },
+  "failures": []
+}

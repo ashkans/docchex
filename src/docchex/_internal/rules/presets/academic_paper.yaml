@@ -1,0 +1,12 @@
+# docchex preset: academic_paper
+# Suitable for journal articles, conference papers, and research reports.
+rules:
+  - {id: academic.abstract,     type: required_section, match: Abstract,     severity: error}
+  - {id: academic.introduction, type: required_section, match: Introduction, severity: error}
+  - {id: academic.related_work, type: required_section, match: Related Work, severity: warning}
+  - {id: academic.methodology,  type: required_section, match: Methodology,  severity: warning}
+  - {id: academic.discussion,   type: required_section, match: Discussion,   severity: warning}
+  - {id: academic.conclusion,   type: required_section, match: Conclusion,   severity: error}
+  - {id: academic.references,   type: required_section, match: References,   severity: error}
+  - {id: academic.min_length,   type: word_count, min: 3000,  severity: warning}
+  - {id: academic.max_length,   type: word_count, max: 15000, severity: warning}

@@ -1,0 +1,8 @@
+Executive Summary
+
+This document deliberately omits the required heading. It exists solely to
+verify that the required_section rule correctly emits a finding when the
+target text is absent from the document.
+
+The document still contains enough words to pass word count thresholds that
+do not depend on a specific heading being present in the content.

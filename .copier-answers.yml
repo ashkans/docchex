@@ -1,0 +1,19 @@
+# Changes here will be overwritten by Copier.
+_commit: 1.11.15
+_src_path: gh:pawamoy/copier-uv
+author_email: ashkan.shokri@gmail.com
+author_fullname: Ashkan Shokri
+author_username: ashkans
+copyright_date: '2026'
+copyright_holder: Ashkan Shokri
+copyright_holder_email: ashkan.shokri@gmail.com
+copyright_license: ISC
+project_description: ''
+project_name: docchex
+python_package_command_line_name: docchex
+python_package_distribution_name: docchex
+python_package_import_name: docchex
+repository_name: docchex
+repository_namespace: ashkans
+repository_provider: github.com
+

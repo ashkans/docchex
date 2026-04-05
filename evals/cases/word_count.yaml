@@ -1,0 +1,59 @@
+version: "1"
+suite: word_count
+# Word counts: short_doc=10, doc_with_intro=79, doc_no_intro=57, long_doc=181
+cases:
+  - id: passes_min_words
+    document: data/documents/doc_with_intro.txt
+    rules:
+      - {id: r1, type: word_count, min: 50, severity: warning}
+    expected:
+      passed: true
+      findings_count: 0
+
+  - id: fails_min_words_warning
+    # Warning severity — report still passes
+    document: data/documents/short_doc.txt
+    rules:
+      - {id: r1, type: word_count, min: 50, severity: warning}
+    expected:
+      passed: true
+      findings_count: 1
+      findings:
+        - {rule_id: r1, severity: warning}
+
+  - id: fails_min_words_error
+    document: data/documents/short_doc.txt
+    rules:
+      - {id: r1, type: word_count, min: 50, severity: error}
+    expected:
+      passed: false
+      findings_count: 1
+      findings:
+        - {rule_id: r1, severity: error}
+
+  - id: fails_max_words
+    # long_doc has 181 words, max=50 triggers a warning
+    document: data/documents/long_doc.txt
+    rules:
+      - {id: r1, type: word_count, max: 50, severity: warning}
+    expected:
+      passed: true
+      findings_count: 1
+      findings:
+        - {rule_id: r1, severity: warning}
+
+  - id: passes_max_words
+    document: data/documents/long_doc.txt
+    rules:
+      - {id: r1, type: word_count, max: 500, severity: warning}
+    expected:
+      passed: true
+      findings_count: 0
+
+  - id: passes_both_bounds
+    document: data/documents/doc_with_intro.txt
+    rules:
+      - {id: r1, type: word_count, min: 50, max: 200, severity: error}
+    expected:
+      passed: true
+      findings_count: 0

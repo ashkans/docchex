@@ -1,0 +1,15 @@
+# Convenience rules file for manual ad-hoc testing.
+# Not consumed by the eval runner — cases define rules inline.
+rules:
+  - id: check_introduction
+    type: required_section
+    match: Introduction
+    severity: error
+  - id: minimum_length
+    type: word_count
+    min: 50
+    severity: warning
+  - id: maximum_length
+    type: word_count
+    max: 500
+    severity: warning

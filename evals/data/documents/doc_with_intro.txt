@@ -1,0 +1,10 @@
+Introduction
+
+This document serves as a functional test fixture for the docchex evaluation
+suite. It intentionally contains the word Introduction near the top so that
+the required_section rule fires correctly when checking for that heading.
+
+The body of this document contains enough words to satisfy a minimum word
+count constraint used in the word_count evaluation suite. No real document
+content is needed here — only structure that the rule engine can exercise
+deterministically across every run of the benchmark.

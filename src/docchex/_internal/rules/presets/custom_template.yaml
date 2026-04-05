@@ -1,0 +1,18 @@
+# docchex preset: custom_template
+# A starter template — copy this file and edit it to define your own rules.
+rules:
+  - id: custom.introduction
+    type: required_section
+    match: Introduction
+    severity: error
+    # severity options: error | warning | info
+
+  - id: custom.min_length
+    type: word_count
+    min: 100
+    severity: warning
+
+  - id: custom.max_length
+    type: word_count
+    max: 5000
+    severity: warning

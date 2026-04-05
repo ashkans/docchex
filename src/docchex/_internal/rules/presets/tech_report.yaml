@@ -1,0 +1,11 @@
+# docchex preset: tech_report
+# Suitable for engineering reports, design documents, and technical specifications.
+rules:
+  - {id: tech_report.abstract,     type: required_section, match: Abstract,     severity: error}
+  - {id: tech_report.introduction, type: required_section, match: Introduction, severity: error}
+  - {id: tech_report.methodology,  type: required_section, match: Methodology,  severity: warning}
+  - {id: tech_report.results,      type: required_section, match: Results,      severity: error}
+  - {id: tech_report.conclusion,   type: required_section, match: Conclusion,   severity: error}
+  - {id: tech_report.references,   type: required_section, match: References,   severity: warning}
+  - {id: tech_report.min_length,   type: word_count, min: 1000,  severity: warning}
+  - {id: tech_report.max_length,   type: word_count, max: 20000, severity: warning}

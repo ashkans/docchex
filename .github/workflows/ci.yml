@@ -1,0 +1,187 @@
+name: ci
+
+on:
+  push:
+    branches:
+    - main
+    - test-me-*
+  pull_request:
+    branches:
+    - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  LANG: en_US.utf-8
+  LC_ALL: en_US.utf-8
+  PYTHONIOENCODING: UTF-8
+  PYTHONWARNDEFAULTENCODING: "1"
+  PYTHON_VERSIONS: ""
+
+jobs:
+
+  quality:
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - macos-latest
+        - windows-latest
+        python-version:
+        - "3.12"
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+        cache-dependency-glob: pyproject.toml
+
+    - name: Install dependencies
+      run: make setup
+
+    - name: Check if the documentation builds correctly
+      run: make check-docs
+
+    - name: Check the code quality
+      run: make check-quality
+
+    - name: Check if the code is correctly typed
+      run: make check-types
+
+    - name: Check for breaking changes in the API
+      run: make check-api
+
+    - name: Store objects inventory for tests
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12' }}
+      with:
+        name: objects.inv
+        path: site/objects.inv
+
+  tests:
+
+    needs:
+    - quality
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - macos-latest
+        - windows-latest
+        python-version:
+        - "3.12"
+        resolution:
+        - highest
+        - lowest-direct
+        exclude:
+        - os: macos-latest
+          resolution: lowest-direct
+        - os: windows-latest
+          resolution: lowest-direct
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+        cache-dependency-glob: pyproject.toml
+        cache-suffix: ${{ matrix.resolution }}
+
+    - name: Install dependencies
+      env:
+        UV_RESOLUTION: ${{ matrix.resolution }}
+      run: make setup
+
+    - name: Download objects inventory
+      uses: actions/download-artifact@v4
+      with:
+        name: objects.inv
+        path: site/
+
+    - name: Run the test suite
+      run: make test
+
+  eval:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+        cache-dependency-glob: pyproject.toml
+
+    - name: Install dependencies
+      run: make setup
+
+    - name: Run eval suite
+      run: uv run python evals/runner.py --history
+
+    - name: Upload eval results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: eval-results-${{ github.sha }}
+        path: evals/results/latest.json
+
+    - name: Run test suite and export coverage
+      run: |
+        uv run pytest tests/ --ignore=tests/test_api.py \
+          --cov=src/docchex --cov-report=json:reports/coverage.json -q --no-header
+
+    - name: Commit latest.json and coverage.json
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add evals/results/latest.json reports/coverage.json
+        git diff --cached --quiet || (git commit -m "ci: update eval and coverage reports [skip ci]" && git push)

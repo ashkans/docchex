@@ -1,0 +1,59 @@
+version: "1"
+suite: required_section
+cases:
+  - id: section_present
+    document: data/documents/doc_with_intro.txt
+    rules:
+      - {id: r1, type: required_section, match: Introduction, severity: error}
+    expected:
+      passed: true
+      findings_count: 0
+
+  - id: section_absent
+    document: data/documents/doc_no_intro.txt
+    rules:
+      - {id: r1, type: required_section, match: Introduction, severity: error}
+    expected:
+      passed: false
+      findings_count: 1
+      findings:
+        - {rule_id: r1, severity: error}
+
+  - id: section_present_case_insensitive
+    document: data/documents/doc_with_intro.txt
+    rules:
+      - {id: r1, type: required_section, match: introduction, severity: error}
+    expected:
+      passed: true
+      findings_count: 0
+
+  - id: section_absent_warning_severity
+    # Warnings do not cause Report.passed to be False
+    document: data/documents/doc_no_intro.txt
+    rules:
+      - {id: r1, type: required_section, match: Introduction, severity: warning}
+    expected:
+      passed: true
+      findings_count: 1
+      findings:
+        - {rule_id: r1, severity: warning}
+
+  - id: multiple_rules_all_pass
+    document: data/documents/doc_with_intro.txt
+    rules:
+      - {id: r1, type: required_section, match: Introduction, severity: error}
+      - {id: r2, type: required_section, match: document, severity: error}
+    expected:
+      passed: true
+      findings_count: 0
+
+  - id: multiple_rules_one_fails
+    document: data/documents/doc_with_intro.txt
+    rules:
+      - {id: r1, type: required_section, match: Introduction, severity: error}
+      - {id: r2, type: required_section, match: MISSING_HEADING_XYZ, severity: error}
+    expected:
+      passed: false
+      findings_count: 1
+      findings:
+        - {rule_id: r2, severity: error}
