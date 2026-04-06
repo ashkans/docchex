@@ -36,8 +36,13 @@ def pyprefix(title: str) -> str:
 
 def _get_changelog_version() -> str:
     changelog_version_re = re.compile(r"^## \[(\d+\.\d+\.\d+)\].*$")
-    with Path(__file__).parent.joinpath("CHANGELOG.md").open("r", encoding="utf8") as file:
-        return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty: ignore[invalid-argument-type]
+    changelog_path = Path(__file__).parent.joinpath("CHANGELOG.md")
+    with changelog_path.open("r", encoding="utf8") as file:
+        for line in file:
+            if match := changelog_version_re.match(line):
+                return match.group(1)
+    msg = f"No version header found in {changelog_path}"
+    raise ValueError(msg)
 
 
 def _griffe_check_against_args(*cli_args: str) -> list[str]:
