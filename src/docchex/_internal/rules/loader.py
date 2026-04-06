@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from docchex._internal.llm.base import LLMClient
     from docchex._internal.rules.base import Rule
 
 _BUILTIN_RULE_TYPES: dict[str, type[Rule]] = {}
@@ -24,6 +25,14 @@ def _registry() -> dict[str, type[Rule]]:
 
 
 class RuleLoader:
+    def __init__(self, llm: LLMClient | None = None) -> None:
+        """Initialise the loader.
+
+        Parameters:
+            llm: Optional LLM client injected into any ``ai_check`` rules that are loaded.
+        """
+        self._llm = llm
+
     def load(self, source: _RuleSource | list[_RuleSource]) -> list[Rule]:
         """Load rules from one or more sources.
 
@@ -38,9 +47,9 @@ class RuleLoader:
         if isinstance(source, list) and (not source or not isinstance(source[0], dict)):
             rules: list[Rule] = []
             for s in source:
-                rules.extend(self._load_single(s))  # type: ignore[arg-type]
+                rules.extend(self._load_single(s))  # ty: ignore[invalid-argument-type]
             return rules
-        return self._load_single(source)  # type: ignore[arg-type]
+        return self._load_single(source)  # ty: ignore[invalid-argument-type]
 
     def _load_single(self, source: _RuleSource) -> list[Rule]:
         if isinstance(source, list):
@@ -78,7 +87,7 @@ class RuleLoader:
             import tomllib  # noqa: PLC0415
         except ImportError:
             try:
-                import tomli as tomllib  # type: ignore[no-redef]  # noqa: PLC0415
+                import tomli as tomllib  # type: ignore[no-redef]  # ty: ignore[unresolved-import]  # noqa: PLC0415
             except ImportError as exc:
                 raise ImportError("tomli is required for Python < 3.11: pip install tomli") from exc
         with path.open("rb") as f:
@@ -90,7 +99,14 @@ class RuleLoader:
         rules: list[Rule] = []
         for cfg in rule_dicts:
             rule_type = cfg.get("type")
+            if rule_type == "ai_check":
+                from docchex._internal.rules.builtin.ai_check import AICheckRule  # noqa: PLC0415
+
+                rules.append(AICheckRule.from_config(cfg, llm=self._llm))
+                continue
             if rule_type not in registry:
-                raise ValueError(f"Unknown rule type: {rule_type!r}. Available: {list(registry)}")
+                raise ValueError(
+                    f"Unknown rule type: {rule_type!r}. Available: {[*list(registry), 'ai_check']}",
+                )
             rules.append(registry[rule_type].from_config(cfg))
         return rules

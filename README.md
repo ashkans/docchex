@@ -90,6 +90,8 @@ Both support a `severity` field: `error` (default for `required_section`), `warn
 
 ## Documentation
 
+Read the full documentation at [ashkans.github.io/docchex](https://ashkans.github.io/docchex/).
+
 ```bash
 uv run python scripts/make docs
 ```

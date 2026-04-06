@@ -34,6 +34,11 @@ dependencies = [
     "tomli>=2.0; python_version < '3.11'",
 ]
 
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.40"]
+openai = ["openai>=1.50"]
+ollama = ["openai>=1.50"]
+
 [project.urls]
 Homepage = "https://ashkans.github.io/docchex"
 Documentation = "https://ashkans.github.io/docchex"

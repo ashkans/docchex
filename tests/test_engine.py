@@ -10,6 +10,7 @@ import pytest
 import docchex
 from docchex._internal.evaluation.engine import RuleEngine
 from docchex._internal.models import Document
+from docchex._internal.rules.base import Rule
 from docchex._internal.rules.builtin.required_section import RequiredSectionRule
 from docchex._internal.rules.builtin.word_count import WordCountRule
 
@@ -29,7 +30,7 @@ def test_engine_no_rules_returns_empty_report() -> None:
 
 
 def test_engine_collects_findings_from_all_rules() -> None:
-    rules = [
+    rules: list[Rule] = [
         RequiredSectionRule(rule_id="r1", match="Introduction"),
         WordCountRule(rule_id="r2", min_words=1000),
     ]
@@ -41,7 +42,7 @@ def test_engine_collects_findings_from_all_rules() -> None:
 
 
 def test_engine_passes_when_all_rules_satisfied() -> None:
-    rules = [
+    rules: list[Rule] = [
         RequiredSectionRule(rule_id="r1", match="Introduction"),
         WordCountRule(rule_id="r2", min_words=2),
     ]

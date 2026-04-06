@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 import docchex
 from docchex._internal.rules.base import Rule
 from docchex._internal.rules.loader import RuleLoader
-
 
 # --- list_presets() ---
 

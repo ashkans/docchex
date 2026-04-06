@@ -31,9 +31,9 @@ def test_for_path_case_insensitive_extension() -> None:
 # --- PDFParser ---
 
 
-def _make_pdfplumber_mock(pages_text: list[str], metadata: dict | None = None) -> MagicMock:
-    def mock_page(text: str) -> MagicMock:
-        return MagicMock(**{"extract_text.return_value": text})
+def _make_pdfplumber_mock(pages_text: list[str | None], metadata: dict | None = None) -> MagicMock:
+    def mock_page(text: str | None) -> MagicMock:
+        return MagicMock(**{"extract_text.return_value": text})  # ty: ignore[invalid-argument-type]
 
     mock_pdf = MagicMock()
     mock_pdf.__enter__ = MagicMock(return_value=mock_pdf)
