@@ -138,6 +138,8 @@ jobs:
       run: make test
 
   eval:
+    needs:
+    - tests
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
