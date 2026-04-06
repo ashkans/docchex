@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>https://ashkans.github.io/docchex/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/changelog/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/credits/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/license/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/reference/api/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/setup/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/evaluation/</loc>
+      </url>
+      <url>
+        <loc>https://ashkans.github.io/docchex/coverage/</loc>
+      </url>
+</urlset>
