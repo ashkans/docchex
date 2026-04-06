@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -36,6 +38,42 @@ def _get_changelog_version() -> str:
     changelog_version_re = re.compile(r"^## \[(\d+\.\d+\.\d+)\].*$")
     with Path(__file__).parent.joinpath("CHANGELOG.md").open("r", encoding="utf8") as file:
         return next(filter(bool, map(changelog_version_re.match, file))).group(1)  # ty: ignore[invalid-argument-type]
+
+
+def _griffe_check_against_args(*cli_args: str) -> list[str]:
+    """Griffe defaults to the latest tag; without tags that yields an invalid empty ref."""
+    if "-a" in cli_args or "--against" in cli_args:
+        return []
+    git_exe = shutil.which("git")
+    if not git_exe:
+        return []
+    tagged = subprocess.run(  # noqa: S603
+        [git_exe, "describe", "--tags", "--abbrev=0"],
+        capture_output=True,
+        check=False,
+    )
+    if tagged.returncode == 0:
+        return []
+    for ref in ("origin/main", "main"):
+        if (
+            subprocess.run(  # noqa: S603
+                [git_exe, "rev-parse", "--verify", ref],
+                capture_output=True,
+                check=False,
+            ).returncode
+            == 0
+        ):
+            return ["--against", ref]
+    if (
+        subprocess.run(  # noqa: S603
+            [git_exe, "rev-parse", "--verify", "HEAD~1"],
+            capture_output=True,
+            check=False,
+        ).returncode
+        == 0
+    ):
+        return ["--against", "HEAD~1"]
+    return []
 
 
 @duty
@@ -90,8 +128,9 @@ def check_types(ctx: Context) -> None:
 @duty(nofail=PY_VERSION == PY_DEV)
 def check_api(ctx: Context, *cli_args: str) -> None:
     """Check for API breaking changes."""
+    against = _griffe_check_against_args(*cli_args)
     ctx.run(
-        tools.griffe.check("docchex", search=["src"], color=True).add_args(*cli_args),
+        tools.griffe.check("docchex", search=["src"], color=True).add_args(*against, *cli_args),
         title="Checking for API breaking changes",
         nofail=True,
     )

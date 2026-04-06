@@ -31,6 +31,10 @@ def environ(**kwargs: str) -> Iterator[None]:
     """Temporarily set environment variables."""
     original = dict(os.environ)
     os.environ.update(kwargs)
+    # Shell-activated `.venv` sets VIRTUAL_ENV; multirun uses `UV_PROJECT_ENVIRONMENT`
+    # pointing at `.venvs/x.y`. uv warns when both disagree — drop VIRTUAL_ENV for this block.
+    if "UV_PROJECT_ENVIRONMENT" in kwargs:
+        os.environ.pop("VIRTUAL_ENV", None)
     try:
         yield
     finally:

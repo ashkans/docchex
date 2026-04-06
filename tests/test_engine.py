@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -10,9 +11,11 @@ import pytest
 import docchex
 from docchex._internal.evaluation.engine import RuleEngine
 from docchex._internal.models import Document
-from docchex._internal.rules.base import Rule
 from docchex._internal.rules.builtin.required_section import RequiredSectionRule
 from docchex._internal.rules.builtin.word_count import WordCountRule
+
+if TYPE_CHECKING:
+    from docchex._internal.rules.base import Rule
 
 
 def _doc(text: str) -> Document:
