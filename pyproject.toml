@@ -47,7 +47,6 @@ Repository = "https://github.com/ashkans/docchex"
 Issues = "https://github.com/ashkans/docchex/issues"
 Discussions = "https://github.com/ashkans/docchex/discussions"
 Gitter = "https://gitter.im/docchex/community"
-Funding = "https://github.com/sponsors/ashkans"
 
 [project.scripts]
 docchex = "docchex.cli:main"
@@ -108,5 +107,11 @@ ci = [
     "zensical>=0.0.21",
 ]
 
+dev = [
+    "jupyter>=1.1",
+    "ipykernel>=6.29",
+    "openai>=1.50",
+]
+
 [tool.uv]
-default-groups = ["maintain", "ci", "docs"]
+default-groups = ["maintain", "ci", "docs", "dev"]
