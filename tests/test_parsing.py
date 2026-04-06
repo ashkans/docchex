@@ -74,11 +74,12 @@ def test_pdf_parser_handles_empty_page() -> None:
     assert doc.pages[1] == ""
 
 
-def test_pdf_parser_sets_path() -> None:
+def test_pdf_parser_sets_path(tmp_path: Path) -> None:
     mock_pdf = _make_pdfplumber_mock(["text"])
+    path = tmp_path / "file.pdf"
     with patch("pdfplumber.open", return_value=mock_pdf):
-        doc = PDFParser().parse(Path("/some/path/file.pdf"))
-    assert doc.path == Path("/some/path/file.pdf")
+        doc = PDFParser().parse(path)
+    assert doc.path == path
 
 
 def test_pdf_parser_captures_metadata() -> None:

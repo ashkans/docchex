@@ -55,11 +55,12 @@ def test_engine_passes_when_all_rules_satisfied() -> None:
     assert report.findings == []
 
 
-def test_engine_document_path_in_report() -> None:
+def test_engine_document_path_in_report(tmp_path: Path) -> None:
     engine = RuleEngine(rules=[])
-    doc = Document(path=Path("/some/file.pdf"), text="text", pages=["text"])
+    path = tmp_path / "file.pdf"
+    doc = Document(path=path, text="text", pages=["text"])
     report = engine.run(doc)
-    assert report.document_path == "/some/file.pdf"
+    assert report.document_path == str(path)
 
 
 # --- run_qaqc integration (PDF parser mocked) ---
